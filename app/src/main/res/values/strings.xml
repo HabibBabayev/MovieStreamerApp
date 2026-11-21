@@ -1,0 +1,34 @@
+<resources>
+    //Auth Screen Components
+    ///////
+    <string name="app_name">MovieStreamerApp</string>
+    <string name="intro_header">Welcome to Mova</string>
+    <string name="signUp_navigation">Don\'t have an account</string>
+    //slogans inside IntroScreen
+    <string name="intro_slogan1">The best movie streaming app of the century to make your days great!</string>
+    <string name="intro_slogan2">Your ultimate destination for endless entertainment and unforgettable movie moments!</string>
+    <string name="intro_slogan3">Bringing the magic of cinema to your screen, making every day extraordinary!</string>
+    //button titles
+    <string name="intro_button_title">Get Started</string>
+    <string name="auth_intro_button_title">Sign in with password</string>
+    //auth screen titles
+    <string name="auth_start">Let\'s you in</string>
+    <string name="auth_login">Login to Your Account</string>
+    <string name="auth_signup">Create Your Account</string>
+    //textButton titles
+    <string name="signup_title">Don\'t have an account?</string>
+    <string name="signin_title">Already have an account?</string>
+    //TopBar headers
+    <string name="forgot_password">Forgot Password</string>
+    <string name="new_password">Create New Password</string>
+    <string name="profile">Fill Your Profile</string>
+///////
+
+
+
+
+
+
+
+
+</resources>
