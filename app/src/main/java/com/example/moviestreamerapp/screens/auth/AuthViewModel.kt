@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor(
+class AuthViewModel @Inject constructor(
 val repository: AppRepository
 ) : BaseViewModel<AuthUiState, AuthEvent>() {
     override val initialState: AuthUiState
@@ -30,6 +30,9 @@ val repository: AppRepository
             is AuthEvent.OnSignUp->{
                 getAuthorization()
             }
+            is AuthEvent.OnSignIn->{
+                loginUser()
+            }
         }
     }
 
@@ -43,26 +46,27 @@ val repository: AppRepository
                        Log.e("ugurlu","basladiq")
                         updateState { it.copy(
                             loading = true,
-                            error = false
+                            error = false,
+                            isLoggedIn = false
                         ) }
                     }
                    is Resource.Success->{
                        Log.e("ugurlu","siz daxil oldunuz")
                         updateState {
                             it.copy(
-                                isLoggedIn = true,
+                                isSignedUp = true,
                                 loading = false,
                                 error = false
                             )
                         }
                     }
                     is Resource.Error->{
-                        Log.e("ugurlu",response.message)
                         updateState {
                             it.copy(
-                                isLoggedIn = false,
+                                isSignedUp = false,
                                 loading = false,
-                                error = true
+                                error = true,
+                                errorMessage = response.message
                             )
                         }
                     }
@@ -70,5 +74,64 @@ val repository: AppRepository
             }
         }
     }
+    private fun loginUser(){
+        viewModelScope.launch {
+            val state=getUiState()
+            repository.login(state.email,state.password).collect { response->
+                when(response){
+                    is Resource.Loading->{
 
+                        updateState {
+                            it.copy(
+                                loading = true,
+                                error = false,
+                                isLoggedIn = false
+                            )
+                        }
+                    }
+                    is Resource.Success->{
+
+                        updateState {
+                            it.copy(
+                                isLoggedIn = true,
+                                error = false,
+                                loading = false
+                            )
+                        }
+                    }
+                    is Resource.Error->{
+                        Log.e("ugurlu",response.message)
+                        updateState {
+                            it.copy(
+                                error = true,
+                                errorMessage = response.message,
+                                loading = false,
+                                isLoggedIn = false
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+    fun checkAuth(){
+        val state=getUiState()
+        if(repository.auth.currentUser==null){
+            updateState {
+                it.copy(
+                    isLoggedIn = false
+                )
+            }
+        } else {
+
+            updateState {
+                it.copy(
+                    isLoggedIn = true
+                )
+            }
+        }
+    }
+    init {
+//        checkAuth()
+    }
 }

@@ -12,6 +12,7 @@ sealed class NavRoutes(val route: String) {
     data object ForgotPassword: NavRoutes("forgot_password")
     data object NewPassword: NavRoutes("new_password")
     data object Profile: NavRoutes("profile_screen")
+    data object Home: NavRoutes("home_screen")
 }
 
 data object Graph{

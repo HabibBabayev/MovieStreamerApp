@@ -2,6 +2,7 @@ package com.example.moviestreamerapp.screens.auth
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -16,6 +17,7 @@ import androidx.navigation.compose.navigation
 import com.example.moviestreamerapp.navigation.Graph
 import com.example.moviestreamerapp.navigation.NavGraph
 import com.example.moviestreamerapp.navigation.NavRoutes
+import kotlinx.coroutines.delay
 
 fun NavGraphBuilder.authNavigation(modifier: Modifier,navController: NavController){
     navigation(startDestination = NavRoutes.AuthEntry.route, route = Graph.auth){
@@ -29,23 +31,33 @@ fun NavGraphBuilder.authNavigation(modifier: Modifier,navController: NavControll
             } )
         }
         composable(route = NavRoutes.Login.route) {
+            val viewModel: AuthViewModel= hiltViewModel()
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
+            val context=LocalContext.current
+LaunchedEffect(state.isLoggedIn) {
+    if (state.isLoggedIn) navController.navigate(route= NavRoutes.Home.route) {
+        popUpTo(route = NavRoutes.AuthEntry.route, popUpToBuilder = { inclusive = true })
+        popUpTo(route = NavRoutes.Login.route, popUpToBuilder = { inclusive = true })
+        Toast.makeText(context, "successfully signed in", Toast.LENGTH_LONG).show()
+    }}
             LoginScreen(modifier=modifier.padding(horizontal = 24.dp), onBackClick = {
                 navController.popBackStack()
             }, onSignUpClick ={navController.navigate(NavRoutes.SignUp.route)}, onForgotClick = {navController.navigate(
-                NavRoutes.ForgotPassword.route)} )
+                NavRoutes.ForgotPassword.route)},
+                state = state, event =viewModel::onEvent)
         }
         composable(route = NavRoutes.SignUp.route) {
-            val viewModel: SignUpViewModel= hiltViewModel()
+            val viewModel: AuthViewModel= hiltViewModel()
             val state by viewModel.uiState.collectAsStateWithLifecycle()
             val context=LocalContext.current
+            LaunchedEffect(state.isSignedUp) {
+                if (state.isSignedUp) navController.navigate(route = NavRoutes.Login.route)
+                delay(1000)
+                Toast.makeText(context,"succesfully signed up", Toast.LENGTH_LONG).show()
+            }
             SignUpScreen(modifier.padding(horizontal = 24.dp), onBackClick = {
                 navController.popBackStack()
-            }, onSignInClick = {navController.navigate(NavRoutes.Login.route)}, onProfileClick = {
-                if (state.isLoggedIn) {
-                    navController.navigate(NavRoutes.Profile.route)
-                    Toast.makeText(context,"succesfull attempt", Toast.LENGTH_LONG)
-                } else Toast.makeText(context,"Unsuccesfull attempt", Toast.LENGTH_LONG)
-            }, state = state, event = viewModel::onEvent)
+            }, onSignInClick = {navController.navigate(NavRoutes.Login.route)}, onProfileClick = {}, state = state, event = viewModel::onEvent)
         }
         composable(route = NavRoutes.ForgotPassword.route){
             ForgotPasswordScreen(modifier.padding(24.dp), onBackClick = {navController.popBackStack()},4)

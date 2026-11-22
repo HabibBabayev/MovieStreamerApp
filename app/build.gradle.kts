@@ -12,7 +12,7 @@ android {
     namespace = "com.example.moviestreamerapp"
     compileSdk {
         version = release(37) {
-            minorApiLevel = 0
+            minorApiLevel = 1
         }
     }
 
@@ -45,6 +45,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.compose.animation.core)
     implementation(libs.androidx.compose.ui.text.google.fonts)
     val nav_version = "2.10.0"
 

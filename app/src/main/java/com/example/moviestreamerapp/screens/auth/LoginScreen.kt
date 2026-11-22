@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.moviestreamerapp.R
 import com.example.moviestreamerapp.customLayouts.AuthHorizontalDivider
 import com.example.moviestreamerapp.customLayouts.AuthTextButton
@@ -37,13 +39,16 @@ import com.example.moviestreamerapp.customLayouts.CustomTextFields
 import com.example.moviestreamerapp.customLayouts.PrimaryButton
 import com.example.moviestreamerapp.customLayouts.SocialAppsNavButtons
 import com.example.moviestreamerapp.customLayouts.TopBar
+import com.example.moviestreamerapp.stateEventControl.AuthEvent
+import com.example.moviestreamerapp.stateEventControl.AuthUiState
 import com.example.moviestreamerapp.ui.theme.PrimaryRed
 import com.example.moviestreamerapp.ui.theme.notoBold
 import com.example.moviestreamerapp.ui.theme.notoSemiBold
 
 @Composable
-fun LoginScreen(modifier: Modifier, onBackClick:()->Unit,onSignUpClick:()->Unit,onForgotClick:()->Unit){
+fun LoginScreen(modifier: Modifier, state: AuthUiState, event:(AuthEvent)->Unit, onBackClick:()->Unit, onSignUpClick:()->Unit, onForgotClick:()->Unit){
     var rememberStatus by remember { mutableStateOf(false) }
+
     Column(modifier.fillMaxSize()) {
         TopBar(Modifier, null, onBackClick)
         Column(Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 32.dp),
@@ -68,15 +73,18 @@ fun LoginScreen(modifier: Modifier, onBackClick:()->Unit,onSignUpClick:()->Unit,
        Column(Modifier.fillMaxWidth(),
            horizontalAlignment = Alignment.CenterHorizontally,
            verticalArrangement = Arrangement.spacedBy(16.dp,Alignment.Top)) {
-        CustomTextFields("it",
-            onValueChange = {},
+        CustomTextFields(state.email,
+            onValueChange = {
+                event(AuthEvent.OnEmailChange(it))},
             R.drawable.email_icon,null,
             keyboardType = KeyboardType.Email,
             placeholder = "Email",
 
         )
-        CustomTextFields("it",
-            onValueChange = {},
+        CustomTextFields(state.password,
+            onValueChange = {
+                event(AuthEvent.OnPasswordChange(it))
+            },
             R.drawable.password_icon,null,
             keyboardType = KeyboardType.Password,
             placeholder = "Password"
@@ -97,7 +105,9 @@ fun LoginScreen(modifier: Modifier, onBackClick:()->Unit,onSignUpClick:()->Unit,
                 fontSize = 14.sp
             )
         }
-        PrimaryButton(PrimaryRed,"Sign in", onClick = {}, Modifier.fillMaxWidth())
+        PrimaryButton(PrimaryRed,"Sign in", onClick = {
+            event(AuthEvent.OnSignIn)
+        }, Modifier.fillMaxWidth())
         TextButton(onClick = { onForgotClick() }) {
             Text(
                 text = "Forgot Password?",

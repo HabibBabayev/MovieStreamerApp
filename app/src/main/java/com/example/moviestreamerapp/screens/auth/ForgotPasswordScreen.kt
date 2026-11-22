@@ -51,6 +51,7 @@ import com.example.moviestreamerapp.ui.theme.PrimaryLightGrayColor
 import com.example.moviestreamerapp.ui.theme.PrimaryRed
 import com.example.moviestreamerapp.ui.theme.forgotPassFieldColor
 import com.example.moviestreamerapp.ui.theme.notoLight
+import com.google.firebase.auth.PhoneAuthOptions
 import kotlinx.coroutines.delay
 
 @Composable
@@ -58,6 +59,7 @@ fun ForgotPasswordScreen(modifier:Modifier,onBackClick:()-> Unit,totalDigits: In
     var numberList by remember {
         mutableStateOf(List(totalDigits){""})
     }
+    val option= PhoneAuthOptions.newBuilder()
     var focuses = remember { List(totalDigits){ FocusRequester() } }
     //for each number we create focus requester
     var timer by remember { mutableIntStateOf(10) }
